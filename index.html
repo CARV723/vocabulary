@@ -59,11 +59,18 @@
       color: #ffffaa;
       margin-bottom: 10px;
     }
+
+    #instructions {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #fffb;
+    }
   </style>
 </head>
 <body>
 
   <h1>Vocabulary Image Game</h1>
+  <div id="instructions">Write the word in lowercase (no uppercase or spaces)</div>
   <div id="timer">Time left: 10</div>
   <img id="image" src="" alt="Guess the word">
   <div>
@@ -71,7 +78,6 @@
   </div>
   <div>
     <button class="submit-btn" onclick="checkAnswer()">Submit</button>
-    <button class="next-btn" onclick="nextQuestion()">Next</button>
   </div>
   <div id="feedback"></div>
 
@@ -90,8 +96,7 @@
     ];
 
     let current = 0;
-    let correctSound = new Audio("correct.mp3");
-    let incorrectSound = new Audio("incorrect.mp3");
+    let score = 0;
     let timer;
     let timeLeft = 10;
 
@@ -99,6 +104,9 @@
     const inputEl = document.getElementById("answerInput");
     const feedbackEl = document.getElementById("feedback");
     const timerEl = document.getElementById("timer");
+
+    let correctSound = new Audio("correct.mp3");
+    let incorrectSound = new Audio("incorrect.mp3");
 
     function loadQuestion() {
       clearInterval(timer);
@@ -109,6 +117,7 @@
       const item = data[current];
       imgEl.src = item.img;
       imgEl.alt = item.word;
+
       timer = setInterval(() => {
         timeLeft--;
         timerEl.textContent = `Time left: ${timeLeft}`;
@@ -119,22 +128,27 @@
       }, 1000);
     }
 
-    function checkAnswer(timeOut = false) {
+    function checkAnswer(timeout = false) {
       clearInterval(timer);
       const userAnswer = inputEl.value.trim().toLowerCase();
       const correctAnswer = data[current].word.toLowerCase();
 
-      if (!timeOut && userAnswer === correctAnswer) {
+      if (!timeout && userAnswer === correctAnswer) {
         feedbackEl.textContent = "Correct!";
         feedbackEl.style.color = "lightgreen";
         correctSound.currentTime = 0;
         correctSound.play();
+        score++;
       } else {
         feedbackEl.textContent = "Incorrect!";
         feedbackEl.style.color = "#ffaaaa";
         incorrectSound.currentTime = 0;
         incorrectSound.play();
       }
+
+      setTimeout(() => {
+        nextQuestion();
+      }, 1500);
     }
 
     function nextQuestion() {
@@ -145,9 +159,9 @@
         imgEl.style.display = "none";
         inputEl.style.display = "none";
         document.querySelector(".submit-btn").style.display = "none";
-        document.querySelector(".next-btn").style.display = "none";
-        feedbackEl.textContent = "Game Over. Thanks for playing!";
+        feedbackEl.textContent = `You scored ${score} out of ${data.length}. Good job! 🎉`;
         timerEl.style.display = "none";
+        document.getElementById("instructions").style.display = "none";
       }
     }
 
