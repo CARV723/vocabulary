@@ -145,6 +145,170 @@
         incorrectSound.currentTime = 0;
         incorrectSound.play();
       }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vocabulary Image Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #0077cc;
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #instructions {
+      font-size: 15px;
+      color: #fffd;
+      margin-bottom: 12px;
+    }
+
+    #timer {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #ffffaa;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+
+    input[type="text"] {
+      padding: 12px;
+      font-size: 18px;
+      width: 80%;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 12px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      margin: 8px;
+    }
+
+    .submit-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    #feedback {
+      font-size: 22px;
+      margin-top: 10px;
+      height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Vocabulary Image Game</h1>
+    <div id="instructions">Write the word in lowercase (no uppercase or spaces)</div>
+    <div id="timer">Time left: 10</div>
+    <img id="image" src="" alt="Guess the word" />
+    <div>
+      <input type="text" id="answerInput" placeholder="Type the word..." />
+    </div>
+    <div>
+      <button class="submit-btn" onclick="checkAnswer()">Submit</button>
+    </div>
+    <div id="feedback"></div>
+  </div>
+
+  <script>
+    const data = [
+      { word: "mirror", img: "mirror.png" },
+      { word: "hair", img: "hair.png" },
+      { word: "toothbrush", img: "toothbrush.png" },
+      { word: "clipper", img: "clipper.png" },
+      { word: "shower", img: "shower.png" },
+      { word: "bathroom", img: "bathroom.png" },
+      { word: "trash", img: "trash.png" },
+      { word: "pepper", img: "pepper.png" },
+      { word: "salt", img: "salt.png" },
+      { word: "head", img: "head.png" }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 10;
+
+    const imgEl = document.getElementById("image");
+    const inputEl = document.getElementById("answerInput");
+    const feedbackEl = document.getElementById("feedback");
+    const timerEl = document.getElementById("timer");
+
+    let correctSound = new Audio("correct.mp3");
+    let incorrectSound = new Audio("incorrect.mp3");
+
+    function loadQuestion() {
+      clearInterval(timer);
+      timeLeft = 10;
+      timerEl.textContent = "Time left: 10";
+      inputEl.value = "";
+      feedbackEl.textContent = "";
+      const item = data[current];
+      imgEl.src = item.img;
+      imgEl.alt = item.word;
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `Time left: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          checkAnswer(true);
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(timeout = false) {
+      clearInterval(timer);
+      const userAnswer = inputEl.value.trim().toLowerCase();
+      const correctAnswer = data[current].word.toLowerCase();
+
+      if (!timeout && userAnswer === correctAnswer) {
+        feedbackEl.textContent = "Correct!";
+        feedbackEl.style.color = "lightgreen";
+        correctSound.currentTime = 0;
+        correctSound.play();
+        score++;
+      } else {
+        feedbackEl.textContent = "Incorrect!";
+        feedbackEl.style.color = "#ffaaaa";
+        incorrectSound.currentTime = 0;
+        incorrectSound.play();
+      }
 
       setTimeout(() => {
         nextQuestion();
@@ -167,6 +331,6 @@
 
     window.onload = loadQuestion;
   </script>
-
 </body>
 </html>
+
